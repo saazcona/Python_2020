@@ -8,15 +8,18 @@
 
 numero_solicitado = input("Dame un numero: ")   # Variable para solicitar los datos
 acum = 0    # Variable acumuladora
+contadora = 0
 
 # Mientras el número solicitado NO sea cero
 while int(numero_solicitado) != 0:
     numero = int(numero_solicitado)
     acum += numero
+    contadora += 1
     numero_solicitado = input("Dame un numero: ")
 
 # Se imprime el resultado final de la variable acumulada
-print("Suma Total: " + str(acum))
+print("Cantidad de números dados: " + str(contadora))
+print("\nSuma Total: " + str(acum))
 
 # 2- Realizar un programa que presente un menú con las siguientes opciones
 #   1- Convertir grados a Celsius a Fahrenheit
