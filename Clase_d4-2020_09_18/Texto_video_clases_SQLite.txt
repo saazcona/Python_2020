@@ -1,0 +1,18 @@
+sqlite3 myshop.db
+
+CREATE TABLE productos (productID interger primary key autoincrement, productName text, unitPrice real);
+
+.tables
+
+INSERT INTO productos (productID, productName, unitPrice) VALUES(NULL, 'Raton USB', 350.00);
+INSERT INTO productos (productID, productName, unitPrice) VALUES(NULL, 'Teclado inalámbrico', 870.00);
+
+SELECT * FROM productos;
+
+SELECT * FROM productos WHERE productID = 1;
+
+DELETE FROM productos WHERE productID = 1;
+
+INSERT INTO productos (productID, productName, unitPrice) VALUES(NULL, 'Raton USB', 350.00);
+
+UPDATE productos SET unitPrice = 380.99 WHERE productID = 3;
