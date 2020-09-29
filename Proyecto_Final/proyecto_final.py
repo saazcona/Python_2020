@@ -93,13 +93,15 @@ def consultar(producto):
         consulta = """SELECT * FROM Productos WHERE producto = ?;"""
 
         cursor.execute(consulta, (producto,))   # Cursor para ejecutar la consulta     
-        resultado = cursor.fetchone()           # Variable para mostrar los resultados de la consulta
+        resultado = cursor.fetchall()           # Variable para mostrar los resultados de la consulta
 
         for filas in resultado:
             print("#: ", filas[0])
             print("Producto: ", filas[1])
             print("Categoría: ", filas[2])
             print("Precio: $", filas[3])
+        if not resultado:
+            print("Producto no se encuentra en la base")
 
     except sqlite3.Error as error:
         print("Error al tratar de leer los datos desde SQLite", error)
@@ -196,7 +198,6 @@ def borrar_registros(borrar_producto):
 # #################################################################################################
 # INICIO DE LA APLICACION
 # #################################################################################################
-
 
 while True:
     print()
