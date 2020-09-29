@@ -58,7 +58,9 @@ def crear_tabla_productos():
         if(conn):
             # Cerrar la conexión
             conn.close()
-    
+
+
+crear_tabla_productos()
 
 # Función para insertar reigstros a la tabla productos
 def insertar_registros(producto, categoria, precio):
@@ -73,7 +75,7 @@ def insertar_registros(producto, categoria, precio):
         """
 
         cursor.execute(insert_query, (producto, categoria, precio))
-        conn.commit()   # Validar los cambios        
+        conn.commit()   # Validar los cambios
         print("Producto insertado exitosamente")
     except sqlite3.IntegrityError:
         print("Este producto ya está en el catálogo!")
@@ -84,43 +86,101 @@ def insertar_registros(producto, categoria, precio):
 
 # Función para consultar un producto particular
 def consultar(producto):
-    # Variable para consultar en la base de datos
-    consulta = """SELECT * FROM Productos WHERE producto = ?;"""
+    try:
+        conn = sqlite3.connect("almacen.db")
+        cursor = conn.cursor()
+        # Variable para consultar en la base de datos
+        consulta = """SELECT * FROM Productos WHERE producto = ?;"""
 
-    # Cursor para ejecutar la consulta
-    cursor.execute(consulta, (producto,))
+        cursor.execute(consulta, (producto,))   # Cursor para ejecutar la consulta     
+        resultado = cursor.fetchone()           # Variable para mostrar los resultados de la consulta
 
-    # Variable para mostrar los resultados de la consulta
-    resultado = cursor.fetchall()
+        for filas in resultado:
+            print("#: ", filas[0])
+            print("Producto: ", filas[1])
+            print("Categoría: ", filas[2])
+            print("Precio: $", filas[3])
 
-    for ress in resultado:
-        print(ress)
+    except sqlite3.Error as error:
+        print("Error al tratar de leer los datos desde SQLite", error)
+    finally:
+        if(conn):
+            conn.close()
 
 
 def actualizar():
-    update_qry = """
+    try:
+        conn = sqlite3.connect("almacen.db")
+        cursor = conn.cursor()
+
+        nom_product = input("Producto a actualizar: ")
+        new_precio = float(input("Precio nuevo: $"))
+
+        update_qry = """
             UPDATE Productos
-            SET producto = ?,
-                categoria = ?,
+            SET precio_unitario = ?
             WHERE
-                producto = ? AND categoria = ?
+                producto = ?
         """
 
+        cursor.execute(update_qry, (new_precio,nom_product))   # Cursor para ejecutar la consulta
+        conn.commit()
+        print("Producto actualizado exitosamente")
+    except sqlite3.Error as error:
+        print("Error al tratar de leer los datos desde SQLite", error)
+    finally:
+        if(conn):
+            conn.close()
 
 
 # Función para consultar todos los registros
 def seleccionar_datos():
-    # Variable para consultar en la base de datos
-    qry_seleccionar = """SELECT * FROM Productos;"""
+    try:
+        conn = sqlite3.connect("almacen.db")
+        cursor = conn.cursor()
 
-    # Cursor para ejecutar la consulta
-    cursor.execute(qry_seleccionar)
+        qry_seleccionar = """SELECT * FROM Productos;"""
 
-    # Variable para mostrar los resultados de la consulta
-    resultado = cursor.fetchall()
+        cursor.execute(qry_seleccionar) # Cursor para ejecutar la consulta
+        resultado = cursor.fetchall()   # Variable para mostrar los resultados de la consulta
 
-    for ress in resultado:
-        print(ress)
+        print("Total de registros: ", len(resultado))
+        for filas in resultado:
+            print("#: ", filas[0])
+            print("Producto: ", filas[1])
+            print("Categoría: ", filas[2])
+            print("Precio: $", filas[3])
+            print("\n")
+ 
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Error al tratar de leer los datos desde SQLite", error)
+    finally:
+        if(conn):
+            conn.close()
+
+
+def borrar_registros(borrar_producto):
+    try:
+        conn = sqlite3.connect("almacen.db")
+        cursor = conn.cursor()
+
+        qry_delete = """ 
+            DELETE FROM Productos
+            WHERE producto = ?
+        """
+
+        cursor.execute(qry_delete, (borrar_producto,))
+        conn.commit()
+
+        print(f"{borrar_producto} ha sido eliminado de la base")
+    except sqlite3.Error as error:
+        print("Error al tratar de eliminar el registro", error)
+
+    finally:
+        if (conn):
+            conn.close()
 
 
 # insertar_registros('Teclado', 'Perifericos Entradas', 749.95)
@@ -137,21 +197,22 @@ def seleccionar_datos():
 # INICIO DE LA APLICACION
 # #################################################################################################
 
-estado = True # Variable condicional para detener el ciclo while
 
-while estado:
+while True:
     print()
     print("BASE DE DATOS ALMACEN")
     print("1 – Agregar nuevo producto y categoría")
     print("2 – Buscar un producto y su categoría")
     print("3 – Actualizar un producto y su categoría")
-    print("4 – Borrar un producto y su categoría.")
+    print("4 – Borrar un producto y su categoría")
     print("5 – Listar todos los productos y categorías")
     print("6 – Salir")
 
     opcion = ""
     while opcion not in ("1", "2", "3", "4", "5", "6"):
-        opcion = input("---> ")
+        opcion = input("--->")
+        if opcion not in ("1", "2", "3", "4", "5", "6"):
+            print("Opción inválida")
 
     if opcion == "1":
         # 1 - Agregar nuevo producto y categoría
@@ -161,11 +222,34 @@ while estado:
 
         insertar_registros(nom_product, categoria, precioU)
 
+        while True:
+            resp = input("¿Desea añadir otro producto? (Si / No): ")
+            if resp == "Si":
+
+                    nom_product = input("Nuevo Producto: ")
+                    categoria = input("Categoria del producto: ")
+                    precioU = float(input("Precio Unitario: $"))
+                    insertar_registros(nom_product, categoria, precioU)
+
+            elif resp != "Si":
+                    print("ok boomer")
+                    break
+
 
     elif opcion == "2":
         # 2 - Buscar un producto y su categoría
         nom_product = input("Producto a buscar: ")
         consultar(nom_product)
+
+
+    elif opcion == "3":
+        # 3 – Actualizar un producto y su categoría
+        actualizar()
+
+    elif opcion == "4":
+        # 4 – Borrar un producto y su categoría
+        producto_a_borrar = input("Producto a eliminar: ")
+        borrar_registros(producto_a_borrar)
 
 
     elif opcion == "5":
@@ -175,11 +259,4 @@ while estado:
 
     elif opcion == "6":
         # 6 - Salir de la aplicación
-        estado = False
-
-    else:
-        print("Opción incorrecta, intente nuevamente")
-
-
-
-
+            exit(print("Usted ha salido del programa"))
