@@ -50,7 +50,7 @@ def crear_tabla_productos():
         
         cursor.execute(qry_crear_tabla)     # Ejecutar la consulta
         conn.commit()                       # Validar los cambios
-        print("Tabla creada exitosamente")
+        print("Tabla creada exitosamente") 
 
     except sqlite3.OperationalError as error:
         print("La tabla Productos ya existe", error)
@@ -84,6 +84,18 @@ def insertar_registros(producto, categoria, precio):
             conn.close()
 
 
+# Registros a precargar ()
+insertar_registros('Mouse', 'Perifericos Entradas', 250.00)
+insertar_registros('Teclado', 'Perifericos Entradas', 749.95)
+insertar_registros('Disco duro', 'Almacenamiento', 6000.00)
+insertar_registros('Cable USB', 'Cables', 150.00)
+insertar_registros('Cable HDMI', 'Cables', 250.00)
+insertar_registros('Monitor LED', 'Perifericos Salidas', 8500.00)
+insertar_registros('Módem', 'Comunicaciones', 1200.00)
+insertar_registros('Memoria USB', 'Almacenamiento', 500.00)
+insertar_registros('Audífonos', 'Perifericos Salidas', 800.00)
+insertar_registros('Cámara digital', 'Perifericos Entradas', 7600.00)
+
 # Función para consultar un producto particular
 def consultar(producto):
     try:
@@ -110,6 +122,7 @@ def consultar(producto):
             conn.close()
 
 
+# Función para actualizar un producto
 def actualizar():
     try:
         conn = sqlite3.connect("almacen.db")
@@ -185,16 +198,6 @@ def borrar_registros(borrar_producto):
             conn.close()
 
 
-# insertar_registros('Teclado', 'Perifericos Entradas', 749.95)
-# insertar_registros('Disco duro', 'Almacenamiento', 6000.00)
-# insertar_registros('Cable USB', 'Cables', 150.00)
-# insertar_registros('Cable HDMI', 'Cables', 250.00)
-# insertar_registros('Monitor LED', 'Perifericos Salidas', 8500.00)
-# insertar_registros('Módem', 'Comunicaciones', 1200.00)
-# insertar_registros('Memoria USB', 'Almacenamiento', 500.00)
-# insertar_registros('Audífonos', 'Perifericos Salidas', 800.00)
-# insertar_registros('Cámara digital', 'Perifericos Entradas', 7600.00)
-
 # #################################################################################################
 # INICIO DE LA APLICACION
 # #################################################################################################
@@ -236,12 +239,10 @@ while True:
                     print("ok boomer")
                     break
 
-
     elif opcion == "2":
         # 2 - Buscar un producto y su categoría
         nom_product = input("Producto a buscar: ")
         consultar(nom_product)
-
 
     elif opcion == "3":
         # 3 – Actualizar un producto y su categoría
@@ -252,11 +253,9 @@ while True:
         producto_a_borrar = input("Producto a eliminar: ")
         borrar_registros(producto_a_borrar)
 
-
     elif opcion == "5":
         # 5 – Listar todos los productos y categorías
         seleccionar_datos()
-
 
     elif opcion == "6":
         # 6 - Salir de la aplicación
